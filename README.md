@@ -1,38 +1,28 @@
-# create-svelte
+# To show dev mode reactivity issue
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);
+we have following page in routes
 
-## Creating a project
+```svelte
+<!-- src/routes/[slug].svelte -->
+<script>
+  import { page } from '$app/stores';
+  let p_slug = $page.params.slug;
+</script>
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm init svelte@next
-
-# create a new project in my-app
-npm init svelte@next my-app
+<h1>{p_slug}</h1>
+<a href={`${p_slug}_x`}>Click me - {p_slug}</a>
 ```
 
-> Note: the `@next` is temporary
+In production build or in dev build without editing
+p_slug is constant since I visit any page like http://localhost:3000/test
 
-## Developing
+Even if I click on link "Click me - test", p_slug will not change.
+This is good expected behaviour.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### Now the issue.
 
-```bash
-npm run dev
+In dev mode visit http://localhost:3000/test then edit `src/routes/[slug].svelte`.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Reload page http://localhost:3000/test
 
-## Building
-
-Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
-
-```bash
-npm run build
-```
-
-> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
+Click on link and see that p_slug is equal to `test_x` what is different behaviour from above.
